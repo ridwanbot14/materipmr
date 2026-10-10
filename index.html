@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buku Saku Materi PMR</title>
+    <!-- Tailwind CSS untuk styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome untuk ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        red: {
+                            50: '#fef2f2',
+                            100: '#fee2e2',
+                            500: '#ef4444',
+                            600: '#dc2626',
+                            700: '#b91c1c',
+                            800: '#991b1b',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .content-section { display: none; animation: fadeIn 0.4s ease-in-out; }
+        .content-section.active { display: block; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #dc2626; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #991b1b; }
+        
+        /* Dropdown transition */
+        .submenu { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+        .submenu.open { max-height: 300px; /* Cukup untuk menampung isi menu */ }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 h-screen flex overflow-hidden">
+
+    <!-- Sidebar / Offcanvas Menu -->
+    <aside id="sidebar" class="bg-white w-64 h-full border-r border-gray-200 flex flex-col transition-transform transform -translate-x-full md:translate-x-0 absolute md:relative z-20 shadow-xl md:shadow-none">
+        <div class="p-6 flex items-center justify-between border-b border-gray-100">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-truck-medical text-red-600 text-2xl"></i>
+                <h1 class="text-xl font-bold text-gray-900 tracking-tight">Materi <span class="text-red-600">PMR</span></h1>
+            </div>
+            <button id="closeSidebar" class="md:hidden text-gray-500 hover:text-red-600">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+            <a href="#" onclick="showSection('home', this)" class="nav-item active flex items-center gap-3 px-3 py-2.5 rounded-lg bg-red-50 text-red-700 font-medium transition-colors">
+                <i class="fa-solid fa-house w-5 text-center"></i> Beranda
+            </a>
+            
+            <a href="#" onclick="showSection('pk', this)" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 font-medium transition-colors">
+                <i class="fa-solid fa-bed-pulse w-5 text-center"></i> Perawatan Keluarga (PK)
+            </a>
+
+            <!-- Dropdown Pertolongan Pertama -->
+            <div>
+                <button onclick="toggleSubmenu('submenu-pp', this)" class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 font-medium transition-colors">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-kit-medical w-5 text-center"></i> Pertolongan Pertama
+                    </div>
+                    <i class="fa-solid fa-chevron-down text-sm transition-transform duration-300" id="icon-submenu-pp"></i>
+                </button>
+                <div id="submenu-pp" class="submenu pl-10 pr-2 flex flex-col space-y-1">
+                    <a href="#" onclick="showSection('pp-patahtulang', this, true)" class="nav-item flex items-center px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-red-600 hover:bg-red-50 transition-colors">
+                        Patah Tulang
+                    </a>
+                    <a href="#" onclick="showSection('pp-pendarahan', this, true)" class="nav-item flex items-center px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-red-600 hover:bg-red-50 transition-colors">
+                        Pendarahan
+                    </a>
+                    <a href="#" onclick="showSection('pp-obat', this, true)" class="nav-item flex items-center px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-red-600 hover:bg-red-50 transition-colors">
+                        Obat-obatan
+                    </a>
+                    <a href="#" onclick="showSection('pp-herbal', this, true)" class="nav-item flex items-center px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-red-600 hover:bg-red-50 transition-colors">
+                        Tanaman Herbal
+                    </a>
+                </div>
+            </div>
+
+            <a href="#" onclick="showSection('uks-pmr', this)" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 font-medium transition-colors">
+                <i class="fa-solid fa-school w-5 text-center"></i> Materi UKS & PMR
+            </a>
+
+            <a href="#" onclick="showSection('sejarah', this)" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 font-medium transition-colors">
+                <i class="fa-solid fa-book-open w-5 text-center"></i> Sejarah PMI
+            </a>
+
+            <a href="#" onclick="showSection('prinsip', this)" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 font-medium transition-colors">
+                <i class="fa-solid fa-hand-holding-heart w-5 text-center"></i> 7 Prinsip Palang Merah
+            </a>
+        </nav>
+
+        <div class="p-4 border-t border-gray-200">
+            <p class="text-xs text-center text-gray-400">© By Kelompok ungu </p>
+        </div>
+    </aside>
+
+    <!-- Overlay untuk mobile ketika sidebar terbuka -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-10 hidden md:hidden"></div>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-full relative w-full">
+        <!-- Header -->
+        <header class="bg-white shadow-sm sticky top-0 z-10">
+            <div class="px-4 sm:px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <button id="openSidebar" class="md:hidden text-gray-600 hover:text-red-600">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                    <h2 class="text-xl font-semibold text-gray-800" id="headerTitle">Beranda</h2>
+                </div>
+            </div>
+        </header>
+
+        <!-- Area Scroll Konten -->
+        <div class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+            
+            <!-- SECTION: HOME -->
+            <section id="home" class="content-section active max-w-4xl mx-auto">
+                <div class="bg-gradient-to-r from-red-600 to-red-700 rounded-2xl p-8 text-white shadow-lg mb-8">
+                    <h1 class="text-3xl font-bold mb-2">Selamat Datang di Materi Diklatsar PMR Wira Skorsa</h1>
+                    <p class="text-red-100 mb-6">Pelajari materi kepalangmerahan, pertolongan pertama, dan perawatan keluarga untuk menjadi relawan masa depan.</p>
+                    <div class="flex gap-4">
+                        <button onclick="showSection('sejarah', document.querySelectorAll('.nav-item')[5])" class="bg-white text-red-600 px-5 py-2.5 rounded-lg font-medium hover:bg-gray-50 transition-colors shadow-sm">Mulai Belajar</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-start gap-4 cursor-pointer hover:shadow-md transition-shadow" onclick="showSection('sejarah', document.querySelectorAll('.nav-item')[5])">
+                        <div class="bg-red-50 text-red-600 p-3 rounded-lg"><i class="fa-solid fa-book-open text-xl"></i></div>
+                        <div>
+                            <h3 class="font-bold text-gray-900 mb-1">Sejarah Palang Merah</h3>
+                            <p class="text-sm text-gray-500">Mempelajari asal mula gerakan kemanusiaan dari pertempuran Solferino hingga terbentuknya PMI.</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-start gap-4 cursor-pointer hover:shadow-md transition-shadow" onclick="toggleSubmenu('submenu-pp', null); showSection('pp-patahtulang', document.querySelectorAll('.nav-item')[2], true);">
+                        <div class="bg-red-50 text-red-600 p-3 rounded-lg"><i class="fa-solid fa-briefcase-medical text-xl"></i></div>
+                        <div>
+                            <h3 class="font-bold text-gray-900 mb-1">Pertolongan Pertama</h3>
+                            <p class="text-sm text-gray-500">Materi mengenai patah tulang, pendarahan, dan pengenalan obat-obatan di UKS.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION: PERAWATAN KELUARGA (PK) -->
+            <section id="pk" class="content-section max-w-4xl mx-auto">
+                <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+                    <div class="flex items-center gap-4 border-b border-gray-100 pb-4 mb-6">
+                        <div class="bg-red-100 text-red-600 w-12 h-12 flex items-center justify-center rounded-full">
+                            <i class="fa-solid fa-bed-pulse text-2xl"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-900">Perawatan Keluarga (PK)</h2>
+                    </div>
+                    
+                    <div class="prose prose-red max-w-none text-gray-600 space-y-6">
+                        <p class="leading-relaxed"><strong>Perawatan Keluarga (PK)</strong> adalah perawatan yang dilakukan oleh anggota keluarga sendiri terhadap orang yang sakit di rumah, dengan menggunakan alat-alat yang sederhana, murah, namun bersih dan aman.</p>
+                        
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800 mb-2">Tujuan Perawatan Keluarga</h3>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>Meringankan penderitaan orang sakit.</li>
+                                <li>Mencegah penularan penyakit kepada anggota keluarga lain.</li>
+                                <li>Mempercepat proses penyembuhan.</li>
+                                <li>Memberikan kenyamanan pada si sakit.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION: PP - PATAH TULANG -->
+            <section id="pp-patahtulang" class="content-section max-w-4xl mx-auto">
+                <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4 border-l-4 border-red-600 pl-4">Patah Tulang (Bone Fracture)</h2>
+                    <div class="space-y-6 text-gray-600">
+                        <p class="text-lg">Adalah kondisi ketika tulang patah sehingga bentuk atau bahkan posisinya berubah. Patah tulang dapat terjadi jika tulang menerima tekanan atau benturan yang kekuatannya lebih besar daripada kekuatan tulang itu sendiri.</p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-800 mb-3 text-red-700"><i class="fa-solid fa-list-ul mr-2"></i>Jenis Patah Tulang</h3>
+                                <ul class="space-y-3">
+                                    <li class="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                                        <strong class="text-gray-900">1. Patah Tulang Tertutup</strong><br>
+                                        Jenis patah tulang dimana tulang yang patah tidak sampai merobek kulit.
+                                    </li>
+                                    <li class="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                                        <strong class="text-gray-900">2. Patah Tulang Terbuka</strong><br>
+                                        Kondisi ketika bagian ujung dari tulang yang patah sampai merobek kulit.
+                                    </li>
+                                    <li class="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                                        <strong class="text-gray-900">3. Patah Tulang Tidak Lengkap</strong><br>
+                                        Merupakan kondisi tulang yang tidak patah sepenuhnya (retak).
+                                    </li>
+                                    <li class="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                                        <strong class="text-gray-900">4. Patah Tulang Lengkap</strong><br>
+                                        Kondisi tulang patah menjadi dua bagian atau lebih.
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="space-y-6">
+                                <div>
+                                    <h3 class="text-lg font-bold text-gray-800 mb-2 text-red-700"><i class="fa-solid fa-car-burst mr-2"></i>Penyebab</h3>
+                                    <p class="mb-2">Terjadi ketika menerima tekanan yang lebih besar dari yang diterima oleh tulang tersebut.</p>
+                                    <ul class="list-disc pl-5">
+                                        <li><strong>Cedera akibat jatuh:</strong> Kecelakaan.</li>
+                                        <li><strong>Cedera hentakan:</strong> Baris-berbaris.</li>
+                                    </ul>
+                                </div>
+
+                                <div>
+                                    <h3 class="text-lg font-bold text-gray-800 mb-2 text-red-700"><i class="fa-solid fa-triangle-exclamation mr-2"></i>Faktor Resiko</h3>
+                                    <ul class="list-decimal pl-5">
+                                        <li>Berusia lanjut</li>
+                                        <li>Memiliki gaya hidup kurang aktif bergerak</li>
+                                        <li>Memiliki kebiasaan merokok</li>
+                                    </ul>
+                                </div>
+
+                                <div class="bg-red-50 p-4 rounded-xl border border-red-100">
+                                    <h3 class="font-bold text-red-800 mb-2"><i class="fa-solid fa-truck-medical mr-2"></i>Gejala Patah Tulang</h3>
+                                    <ul class="list-disc pl-5 text-red-900">
+                                        <li>Nyeri hebat di area patah tulang, memar, dan bengkak</li>
+                                        <li>Kesemutan</li>
+                                        <li>Sulit bergerak</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Tambahan Pencegahan Patah Tulang -->
+                        <div class="mt-6 bg-green-50 p-5 rounded-xl border border-green-200">
+                            <h3 class="text-lg font-bold text-green-800 mb-3"><i class="fa-solid fa-shield-halved mr-2"></i>Pencegahan Patah Tulang</h3>
+                            <ul class="list-decimal pl-5 text-green-900 space-y-2">
+                                <li><strong>Menggunakan alat keselamatan berkendara</strong> (seperti menggunakan helm dan sabuk pengaman).</li>
+                                <li><strong>Melakukan latihan secara rutin</strong> (untuk memperkuat massa tulang dan otot tubuh).</li>
+                                <li><strong>Mengenakan alat pelindung saat berolahraga</strong> (seperti deker lutut, deker siku, atau helm sepeda saat melakukan olahraga ekstrem).</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION: PP - PENDARAHAN -->
+            <section id="pp-pendarahan" class="content-section max-w-4xl mx-auto">
+                <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6 border-l-4 border-red-600 pl-4">Perdarahan vs Pendarahan</h2>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+                        <div class="bg-red-50 p-6 rounded-xl border border-red-100 text-center">
+                            <i class="fa-solid fa-droplet text-4xl text-red-500 mb-3"></i>
+                            <h3 class="text-xl font-bold text-red-800">Perdarahan</h3>
+                            <p class="text-red-900 mt-2">Luka dari luar / terkena benturan secara langsung.</p>
+                        </div>
+                        <div class="bg-blue-50 p-6 rounded-xl border border-blue-100 text-center">
+                            <i class="fa-solid fa-kit-medical text-4xl text-blue-500 mb-3"></i>
+                            <h3 class="text-xl font-bold text-blue-800">Pendarahan</h3>
+                            <p class="text-blue-900 mt-2">Luka yang terjadi dari dalam tubuh.</p>
+                        </div>
+                    </div>
+
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Perdarahan Dibagi Menjadi 3 Jenis:</h3>
+                    <div class="space-y-4">
+                        <div class="flex gap-4 items-start bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <div class="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center font-bold text-xl flex-shrink-0">1</div>
+                            <div>
+                                <h4 class="font-bold text-lg text-gray-800">Arteri</h4>
+                                <div class="text-sm text-gray-600 mt-1">
+                                    <p class="font-medium mb-1">Ciri-ciri perdarahan arteri:</p>
+                                    <ul class="list-disc pl-4 space-y-1">
+                                        <li>Warna darah merah terang karena kaya oksigen.</li>
+                                        <li>Memancar/menyemprot keluar dari luka.</li>
+                                        <li>Mengikuti denyut jantung—aliran darah terlihat berdenyut/pulsatif.</li>
+                                        <li>Deras dan cepat, tekanannya tinggi.</li>
+                                        <li>Sulit dihentikan dengan tekanan ringan.</li>
+                                        <li>Volume perdarahan bisa banyak dalam waktu singkat.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-start bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <div class="w-12 h-12 rounded-full bg-red-800 text-white flex items-center justify-center font-bold text-xl flex-shrink-0">2</div>
+                            <div>
+                                <h4 class="font-bold text-lg text-gray-800">Vena</h4>
+                                <div class="text-sm text-gray-600 mt-1">
+                                    <p class="font-medium mb-1">Ciri-ciri perdarahan vena:</p>
+                                    <ul class="list-disc pl-4 space-y-1">
+                                        <li>Warna darah merah gelap atau kebiruan karena kadar oksigen rendah.</li>
+                                        <li>Mengalir lambat, terus-menerus, atau merembes—tidak memancar.</li>
+                                        <li>Tidak berdenyut mengikuti denyut jantung.</li>
+                                        <li>Tekanan lebih rendah dibanding arteri, sehingga lebih mudah dikendalikan dengan tekanan langsung.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-start bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <div class="w-12 h-12 rounded-full bg-red-400 text-white flex items-center justify-center font-bold text-xl flex-shrink-0">3</div>
+                            <div>
+                                <h4 class="font-bold text-lg text-gray-800">Kapiler</h4>
+                                <div class="text-sm text-gray-600 mt-1">
+                                    <p class="font-medium mb-1">Ciri-ciri perdarahan kapiler:</p>
+                                    <ul class="list-disc pl-4 space-y-1">
+                                        <li>Warna darah merah terang (mirip arteri, tapi tidak memancar).</li>
+                                        <li>Merembes perlahan dari permukaan luka.</li>
+                                        <li>Tidak memancar dan tidak berdenyut.</li>
+                                        <li>Mengalir pelan atau hanya membasahi luka.</li>
+                                        <li>Jumlah perdarahan biasanya sedikit.</li>
+                                        <li>Sering terjadi pada luka gores, lecet, atau luka dangkal.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION: PP - OBAT-OBATAN -->
+            <section id="pp-obat" class="content-section max-w-4xl mx-auto">
+                <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2 border-l-4 border-red-600 pl-4">Obat-obatan di UKS</h2>
+                    <p class="text-gray-500 mb-8 ml-5">Berikut adalah contoh obat-obatan yang umumnya tersedia di ruang Usaha Kesehatan Sekolah (UKS).</p>
+
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                        <!-- Obat 1 -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition">
+                            <img src="https://i.ibb.co.com/NgzqdhRB/flucadex-t.png" alt="flucadex t" border="0"></a>
+                            <div class="p-3 text-center">
+                                <h4 class="font-bold text-gray-800">1. Flucadex</h4>
+                                <p class="text-xs text-gray-500 mt-1">Meringankan gejala flu, demam, dan sakit kepala.</p>
+                            </div>
+                        </div>
+                        <!-- Obat 2 -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition">
+                            <img src="https://i.ibb.co.com/GQV8f45Y/Mefenamic-Acid-500-utama.jpg" alt="Mefenamic Acid 500 utama" border="0"></a>
+                            <div class="p-3 text-center">
+                                <h4 class="font-bold text-gray-800">2. Mefenamic acid</h4>
+                                <p class="text-xs text-gray-500 mt-1">Obat pereda nyeri seperti sakit gigi dan sakit kepala.</p>
+                            </div>
+                        </div>
+                        <!-- Obat 3 -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition">
+                            <img src="https://i.ibb.co.com/tw2C14Bx/Akita-10-Tablet-Utama.jpg" alt="Akita-10-Tablet-Utama" border="0"></a>
+                            <div class="p-3 text-center">
+                                <h4 class="font-bold text-gray-800">3. Akita</h4>
+                                <p class="text-xs text-gray-500 mt-1">Mengatasi sakit maag dan asam lambung berlebih.</p>
+                            </div>
+                        </div>
+                        <!-- Obat 4 -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition">
+                            <img src="https://i.ibb.co.com/MkZD8yk0/feminax.jpg" alt="feminax" border="0"></a>
+                            <div class="p-3 text-center">
+                                <h4 class="font-bold text-gray-800">4. Feminax</h4>
+                                <p class="text-xs text-gray-500 mt-1">Meredakan nyeri haid dan kram pada perut.</p>
+                            </div>
+                        </div>
+                        <!-- Obat 5 -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition">
+                            <img src="https://i.ibb.co.com/KcfwGhQQ/Paracetamol-New-3ef1c093-25ba-46ae-8165-a4a13a5f1ba4.jpg" alt="Paracetamol-New-3ef1c093-25ba-46ae-8165-a4a13a5f1ba4" border="0"></a>
+                            <div class="p-3 text-center">
+                                <h4 class="font-bold text-gray-800">5. Paracetamol</h4>
+                                <p class="text-xs text-gray-500 mt-1">Obat penurun demam dan pereda nyeri ringan.</p>
+                            </div>
+                        </div>
+                        <!-- Obat 6 -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition">
+                            <img src="https://i.ibb.co.com/zWkbQzw2/kasa-hidrofil-steril-16-16.jpg" alt="kasa hidrofil steril 16 16" border="0"></a>
+                            <div class="p-3 text-center">
+                                <h4 class="font-bold text-gray-800">6. Kasa</h4>
+                                <p class="text-xs text-gray-500 mt-1">Pembalut steril untuk menutup dan melindungi luka.</p>
+                            </div>
+                        </div>
+                        <!-- Obat 7 -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition">
+                            <img src="https://i.ibb.co.com/Hf8nf1Rh/apotek-online-k24klik-20200810090028359225-RIVANOL-300-ML.jpg" alt="apotek online k24klik 20200810090028359225 RIVANOL 300ML" border="0"></a>
+                            <div class="p-3 text-center">
+                                <h4 class="font-bold text-gray-800">7. Rivanol</h4>
+                                <p class="text-xs text-gray-500 mt-1">Cairan antiseptik untuk membersihkan luka luar.</p>
+                            </div>
+                        </div>
+                        <!-- Obat 8 -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition">
+                            <img src="https://i.ibb.co.com/NgCqfSKf/295851-6-2-2025-17-8-1.webp" alt="295851 6 2 2025 17 8 1" border="0"></a>
+                            <div class="p-3 text-center">
+                                <h4 class="font-bold text-gray-800">8. Hansaplast</h4>
+                                <p class="text-xs text-gray-500 mt-1">Plester penutup untuk melindungi luka berukuran kecil.</p>
+                            </div>
+                        </div>
+                        <!-- Obat 9 -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition">
+                            <img src="https://i.ibb.co.com/VWy4rv4k/712762-19-5-2023-15-2-41.webp" alt="712762 19 5 2023 15 2 41" border="0"></a>
+                            <div class="p-3 text-center">
+                                <h4 class="font-bold text-gray-800">9. Minyak Kayu Putih</h4>
+                                <p class="text-xs text-gray-500 mt-1">Menghangatkan tubuh dan meredakan perut kembung.</p>
+                            </div>
+                        </div>
+                        <!-- Obat 10 -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition">
+                            <img src="https://i.ibb.co.com/SDC5F4xJ/4313-1665770911.webp" alt="4313 1665770911" border="0"></a>
+                            <div class="p-3 text-center">
+                                <h4 class="font-bold text-gray-800">10. Minyak Tawon</h4>
+                                <p class="text-xs text-gray-500 mt-1">Meredakan pegal linu, keseleo, dan gigitan serangga.</p>
+                            </div>
+                        </div>
+                        <!-- Obat 11 -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition">
+                            <img src="https://i.ibb.co.com/TxWf0CWM/hot-in-hotin-cream-krim-hangat-pereda-pegal-nyeri-sendi-60gr-botol-roll-full01-rjv48sqz.jpg" alt="hot-in-hotin-cream-krim-hangat-pereda-pegal-nyeri-sendi-60gr-botol-roll-full01-rjv48sqz" border="0"></a>
+                            <div class="p-3 text-center">
+                                <h4 class="font-bold text-gray-800">11. Hotin Cream</h4>
+                                <p class="text-xs text-gray-500 mt-1">Krim pereda nyeri otot, pegal linu, dan nyeri sendi.</p>
+                            </div>
+                        </div>
+                        <!-- Obat 12 -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition">
+                            <img src="https://i.ibb.co.com/84MTLz83/antasida-doen.jpg" alt="antasida-doen" border="0"></a>
+                            <div class="p-3 text-center">
+                                <h4 class="font-bold text-gray-800">12. Antasida Doen</h4>
+                                <p class="text-xs text-gray-500 mt-1">Meredakan nyeri ulu hati dan mual akibat sakit maag.</p>
+                            </div>
+                        </div>
+                        <!-- Obat 13 -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition">
+                            <img src="https://i.ibb.co.com/5Xs3Z3T2/apotek-online-k24klik-202607280202221152122-Betadine-5ml-2.jpg" alt="apotek online k24klik 202607280202221152122 Betadine 5ml 2" border="0"></a>
+                            <div class="p-3 text-center">
+                                <h4 class="font-bold text-gray-800">13.Betadine</h4>
+                                <p class="text-xs text-gray-500 mt-1">Obat merah antiseptik untuk mencegah infeksi luka.</p>
+                            </div>
+                        </div>
+                            
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION: PP - TANAMAN HERBAL -->
+            <section id="pp-herbal" class="content-section max-w-4xl mx-auto">
+                <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4 border-l-4 border-green-600 pl-4">Tanaman Herbal (TOGA)</h2>
+                    <p class="text-gray-600 mb-6">Tanaman Obat Keluarga (TOGA) merupakan tanaman yang berkhasiat sebagai obat untuk penanganan pertama. Berikut adalah jenis-jenisnya beserta khasiatnya:</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Herbal 1 -->
+                        <div class="bg-green-50 p-4 rounded-xl border border-green-100 flex gap-4 hover:shadow-md transition">
+                            <div class="bg-white w-10 h-10 rounded-full flex items-center justify-center text-green-600 shadow-sm shrink-0">
+                                <i class="fa-solid fa-leaf"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-green-900">1. Jahe</h3>
+                                <p class="text-sm text-green-800 mt-1">Berfungsi untuk menghangatkan tubuh, meredakan mual, batuk, dan mengatasi masalah pencernaan.</p>
+                            </div>
+                        </div>
+
+                        <!-- Herbal 2 -->
+                        <div class="bg-green-50 p-4 rounded-xl border border-green-100 flex gap-4 hover:shadow-md transition">
+                            <div class="bg-white w-10 h-10 rounded-full flex items-center justify-center text-green-600 shadow-sm shrink-0">
+                                <i class="fa-solid fa-leaf"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-green-900">2. Daun Sirih</h3>
+                                <p class="text-sm text-green-800 mt-1">Sebagai antiseptik alami, sangat efektif untuk menghentikan mimisan dan menjaga kesehatan mulut.</p>
+                            </div>
+                        </div>
+
+                        <!-- Herbal 3 -->
+                        <div class="bg-green-50 p-4 rounded-xl border border-green-100 flex gap-4 hover:shadow-md transition">
+                            <div class="bg-white w-10 h-10 rounded-full flex items-center justify-center text-green-600 shadow-sm shrink-0">
+                                <i class="fa-solid fa-leaf"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-green-900">3. Kunyit</h3>
+                                <p class="text-sm text-green-800 mt-1">Memiliki sifat anti-inflamasi (anti-peradangan), meredakan nyeri lambung, dan membantu penyembuhan luka.</p>
+                            </div>
+                        </div>
+
+                        <!-- Herbal 4 -->
+                        <div class="bg-green-50 p-4 rounded-xl border border-green-100 flex gap-4 hover:shadow-md transition">
+                            <div class="bg-white w-10 h-10 rounded-full flex items-center justify-center text-green-600 shadow-sm shrink-0">
+                                <i class="fa-solid fa-leaf"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-green-900">4. Kencur</h3>
+                                <p class="text-sm text-green-800 mt-1">Berkhasiat meredakan batuk berdahak, melegakan tenggorokan, serta membantu menambah nafsu makan.</p>
+                            </div>
+                        </div>
+
+                        <!-- Herbal 5 -->
+                        <div class="bg-green-50 p-4 rounded-xl border border-green-100 flex gap-4 hover:shadow-md transition">
+                            <div class="bg-white w-10 h-10 rounded-full flex items-center justify-center text-green-600 shadow-sm shrink-0">
+                                <i class="fa-solid fa-leaf"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-green-900">5. Sereh</h3>
+                                <p class="text-sm text-green-800 mt-1">Bermanfaat untuk meredakan nyeri sendi, sakit kepala, serta dapat digunakan sebagai penangkal nyamuk alami.</p>
+                            </div>
+                        </div>
+
+                        <!-- Herbal 6 -->
+                        <div class="bg-green-50 p-4 rounded-xl border border-green-100 flex gap-4 hover:shadow-md transition">
+                            <div class="bg-white w-10 h-10 rounded-full flex items-center justify-center text-green-600 shadow-sm shrink-0">
+                                <i class="fa-solid fa-leaf"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-green-900">6. Umbi Garut</h3>
+                                <p class="text-sm text-green-800 mt-1">Sangat baik untuk mengatasi masalah lambung (maag), meredakan diare, dan sebagai sumber karbohidrat sehat.</p>
+                            </div>
+                        </div>
+
+                        <!-- Herbal 7 -->
+                        <div class="bg-green-50 p-4 rounded-xl border border-green-100 flex gap-4 hover:shadow-md transition">
+                            <div class="bg-white w-10 h-10 rounded-full flex items-center justify-center text-green-600 shadow-sm shrink-0">
+                                <i class="fa-solid fa-leaf"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-green-900">7. Jatropha Multifida</h3>
+                                <p class="text-sm text-green-800 mt-1">(Tanaman Yodium) Getahnya sangat ampuh digunakan sebagai antiseptik untuk menutup dan mengobati luka baru.</p>
+                            </div>
+                        </div>
+
+                        <!-- Herbal 8 -->
+                        <div class="bg-green-50 p-4 rounded-xl border border-green-100 flex gap-4 hover:shadow-md transition">
+                            <div class="bg-white w-10 h-10 rounded-full flex items-center justify-center text-green-600 shadow-sm shrink-0">
+                                <i class="fa-solid fa-leaf"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-green-900">8. Lidah Buaya</h3>
+                                <p class="text-sm text-green-800 mt-1">Mampu mendinginkan dan mengobati luka bakar ringan, meredakan peradangan kulit, dan menyuburkan rambut.</p>
+                            </div>
+                        </div>
+
+                        <!-- Herbal 9 -->
+                        <div class="bg-green-50 p-4 rounded-xl border border-green-100 flex gap-4 hover:shadow-md transition md:col-span-2 md:w-1/2 md:mx-auto">
+                            <div class="bg-white w-10 h-10 rounded-full flex items-center justify-center text-green-600 shadow-sm shrink-0">
+                                <i class="fa-solid fa-leaf"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-green-900">9. Pandan</h3>
+                                <p class="text-sm text-green-800 mt-1">Membantu menurunkan tekanan darah, meredakan nyeri sendi, dan aromanya berfungsi sebagai penenang alami.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION: UKS & PMR -->
+            <section id="uks-pmr" class="content-section max-w-4xl mx-auto">
+                <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4 border-l-4 border-blue-600 pl-4">Materi UKS, PMR dll</h2>
+                    <p class="text-gray-600 mb-6">Materi belum tersedia / Segera Hadir. Silakan akses materi Obat-obatan UKS di menu Pertolongan Pertama.</p>
+                </div>
+            </section>
+
+            <!-- SECTION: SEJARAH PMI DAN PALANG MERAH -->
+            <section id="sejarah" class="content-section max-w-4xl mx-auto">
+                
+                <!-- Tentang Palang Merah Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                    <div class="bg-red-50 p-6 rounded-xl border border-red-200 shadow-sm flex flex-col justify-center items-center text-center">
+                        <i class="fa-regular fa-calendar-check text-4xl text-red-600 mb-3"></i>
+                        <h3 class="font-bold text-xl text-red-900">8 Mei</h3>
+                        <p class="text-sm text-red-700 mt-1"><strong>Hari Palang Merah Sedunia</strong></p>
+                        <p class="text-xs text-red-600 mt-2">Merupakan hari lahir Jean Henry Dunant (Lahir: 8 Mei 1828 di Jenewa, Swiss).</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-center items-center text-center">
+                        <i class="fa-solid fa-flag text-4xl text-red-600 mb-3"></i>
+                        <h3 class="font-bold text-xl text-gray-900">17 September</h3>
+                        <p class="text-sm text-gray-600 mt-1"><strong>Hari Palang Merah Indonesia (PMI)</strong></p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 mb-8">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center border-b pb-4">Sejarah Lahirnya Gerakan Kepalangmerahan</h2>
+                    
+                    <div class="relative border-l-2 border-red-500 ml-4 md:ml-6 pl-6 space-y-8">
+                        <!-- Timeline 1 -->
+                        <div class="relative">
+                            <div class="absolute -left-[35px] bg-red-500 w-4 h-4 rounded-full border-4 border-white shadow"></div>
+                            <h3 class="font-bold text-xl text-gray-800">1859 - Pertempuran Solferino</h3>
+                            <p class="text-gray-600 text-sm mt-2">Terjadi peperangan di kota Solferino, Italia, antara Perancis dan Austria. Terdapat 40.000 tentara terluka dan tewas karena tidak ada bantuan medis.</p>
+                            <p class="text-gray-600 text-sm mt-2">Saat itu, seorang pengusaha Swiss bernama <strong>Henry Dunant</strong> sedang melakukan perjalanan dan melewati daerah perang. Karena merasa iba, ia lalu mengajak penduduk setempat untuk merawat korban.</p>
+                        </div>
+                        
+                        <!-- Timeline 2 -->
+                        <div class="relative">
+                            <div class="absolute -left-[35px] bg-red-500 w-4 h-4 rounded-full border-4 border-white shadow"></div>
+                            <h3 class="font-bold text-xl text-gray-800">Buku "A Memory of Solferino"</h3>
+                            <p class="text-gray-600 text-sm mt-2">Henry Dunant menulis buku <em>A Memory of Solferino</em> (Kenangan dari Solferino) yang berisi 2 gagasan utama, yang kemudian terwujud menjadi Gerakan Palang Merah dan Bulan Sabit Merah Internasional serta Hukum Humaniter.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6 border-b pb-4">Komponen Gerakan Palang Merah & Bulan Sabit Merah Internasional</h2>
+                    
+                    <div class="space-y-6">
+                        <div class="bg-gray-50 p-5 rounded-lg border border-gray-200">
+                            <h3 class="text-xl font-bold text-red-700 mb-2">1. ICRC</h3>
+                            <p class="text-gray-700 text-sm">Komite Internasional yang didirikan pada tahun 1863 sebagai organisasi yang netral. Bertugas memberi bantuan dan melindungi korban perang.</p>
+                        </div>
+
+                        <div class="bg-gray-50 p-5 rounded-lg border border-gray-200">
+                            <h3 class="text-xl font-bold text-red-700 mb-2">2. IFRC</h3>
+                            <p class="text-gray-700 text-sm">Federasi Internasional Perhimpunan Palang Merah dan Bulan Sabit Merah. Berdiri pada tahun 1919.</p>
+                        </div>
+
+                        <div class="bg-red-50 p-5 rounded-lg border border-red-200">
+                            <h3 class="text-xl font-bold text-red-700 mb-2">3. PMI (Palang Merah Indonesia)</h3>
+                            <p class="text-gray-700 text-sm">Sedangkan perhimpunan nasional di Indonesia bernama PMI. Diatur dan terdapat pada Undang-Undang No. 1 Tahun 2015 tentang Kepalangmerahan.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION: 7 PRINSIP DASAR -->
+            <section id="prinsip" class="content-section max-w-4xl mx-auto">
+                <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2 text-center">7 Prinsip Dasar</h2>
+                    <h3 class="text-sm text-gray-500 text-center mb-8 uppercase tracking-widest">Kepalangmerahan dan Bulan Sabit Merah Internasional</h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-gray-50 border border-gray-200 p-5 rounded-xl flex gap-4 items-start hover:border-red-500 hover:shadow-md transition-all">
+                            <div class="text-red-500 font-bold text-3xl">1</div>
+                            <div>
+                                <h4 class="font-bold text-gray-900 text-lg uppercase">Kemanusiaan</h4>
+                                <p class="text-sm text-gray-600 mt-2">Lahir dari keinginan untuk memberikan pertolongan kepada korban terluka. Tujuannya melindungi jiwa kesehatan.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-50 border border-gray-200 p-5 rounded-xl flex gap-4 items-start hover:border-red-500 hover:shadow-md transition-all">
+                            <div class="text-red-500 font-bold text-3xl">2</div>
+                            <div>
+                                <h4 class="font-bold text-gray-900 text-lg uppercase">Kesamaan</h4>
+                                <p class="text-sm text-gray-600 mt-2">Memberi bantuan kepada orang tanpa membeda-bedakan. Tujuannya mengurangi penderitaan orang, dan mendahulukan yang lebih parah.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-50 border border-gray-200 p-5 rounded-xl flex gap-4 items-start hover:border-red-500 hover:shadow-md transition-all">
+                            <div class="text-red-500 font-bold text-3xl">3</div>
+                            <div>
+                                <h4 class="font-bold text-gray-900 text-lg uppercase">Kenetralan</h4>
+                                <p class="text-sm text-gray-600 mt-2">Gerakan tidak memihak dalam pertentangan.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-50 border border-gray-200 p-5 rounded-xl flex gap-4 items-start hover:border-red-500 hover:shadow-md transition-all">
+                            <div class="text-red-500 font-bold text-3xl">4</div>
+                            <div>
+                                <h4 class="font-bold text-gray-900 text-lg uppercase">Kemandirian</h4>
+                                <p class="text-sm text-gray-600 mt-2">Gerakan bersifat mandiri dan bersifat otonom.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-50 border border-gray-200 p-5 rounded-xl flex gap-4 items-start hover:border-red-500 hover:shadow-md transition-all">
+                            <div class="text-red-500 font-bold text-3xl">5</div>
+                            <div>
+                                <h4 class="font-bold text-gray-900 text-lg uppercase">Kesukarelaan</h4>
+                                <p class="text-sm text-gray-600 mt-2">Gerakan memberi bantuan tanpa mencari keuntungan.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-50 border border-gray-200 p-5 rounded-xl flex gap-4 items-start hover:border-red-500 hover:shadow-md transition-all">
+                            <div class="text-red-500 font-bold text-3xl">6</div>
+                            <div>
+                                <h4 class="font-bold text-gray-900 text-lg uppercase">Kesatuan</h4>
+                                <p class="text-sm text-gray-600 mt-2">Hanya terdapat satu perhimpunan nasional, yaitu Palang Merah atau Bulan Sabit dan gerakan bersifat terbuka untuk melaksanakan tugas kemanusiaan di seluruh wilayah dengan tanggung jawab.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-50 border border-gray-200 p-5 rounded-xl flex gap-4 items-start md:col-span-2 md:w-1/2 md:mx-auto hover:border-red-500 hover:shadow-md transition-all">
+                            <div class="text-red-500 font-bold text-3xl">7</div>
+                            <div>
+                                <h4 class="font-bold text-gray-900 text-lg uppercase">Kesemestaan</h4>
+                                <p class="text-sm text-gray-600 mt-2">Gerakan bersifat semesta.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <script>
+        // Logika untuk menampilkan dan menyembunyikan halaman/section materi
+        function showSection(sectionId, clickedElement, isSubmenu = false) {
+            // Sembunyikan semua section
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(sec => sec.classList.remove('active'));
+
+            // Tampilkan section yang dituju
+            const activeSection = document.getElementById(sectionId);
+            if (activeSection) {
+                activeSection.classList.add('active');
+            }
+
+            // Atur styling untuk navigasi (active state)
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                // Reset styling
+                item.classList.remove('bg-red-50', 'text-red-700', 'text-red-600');
+                if(!item.classList.contains('text-sm')) {
+                    // Untuk menu utama
+                    item.classList.add('text-gray-600');
+                } else {
+                    // Untuk sub menu
+                    item.classList.add('text-gray-500');
+                }
+            });
+
+            // Set styling elemen yang diklik jika ada
+            if (clickedElement) {
+                if (isSubmenu) {
+                    clickedElement.classList.add('text-red-600', 'bg-red-50');
+                    clickedElement.classList.remove('text-gray-500');
+                    // Mengubah judul header
+                    document.getElementById('headerTitle').innerText = "Pertolongan Pertama - " + clickedElement.innerText.trim();
+                } else {
+                    clickedElement.classList.add('bg-red-50', 'text-red-700');
+                    clickedElement.classList.remove('text-gray-600');
+                    document.getElementById('headerTitle').innerText = clickedElement.innerText.trim();
+                    
+                    // Tutup submenu jika klik menu utama lain
+                    if(sectionId !== 'pp') {
+                        const submenu = document.getElementById('submenu-pp');
+                        const icon = document.getElementById('icon-submenu-pp');
+                        submenu.classList.remove('open');
+                        icon.style.transform = 'rotate(0deg)';
+                    }
+                }
+            }
+
+            // Tutup sidebar di versi mobile (Offcanvas)
+            closeMobileSidebar();
+        }
+
+        // Logika Dropdown menu "Pertolongan Pertama"
+        function toggleSubmenu(submenuId, buttonElement) {
+            const submenu = document.getElementById(submenuId);
+            const icon = document.getElementById('icon-submenu-pp');
+            
+            if (submenu.classList.contains('open')) {
+                submenu.classList.remove('open');
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                submenu.classList.add('open');
+                icon.style.transform = 'rotate(180deg)';
+            }
+        }
+
+        // --- Logika Sidebar Mobile Responsif ---
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const openSidebarBtn = document.getElementById('openSidebar');
+        const closeSidebarBtn = document.getElementById('closeSidebar');
+
+        function openMobileSidebar() {
+            sidebar.classList.remove('-translate-x-full');
+            sidebarOverlay.classList.remove('hidden');
+        }
+
+        function closeMobileSidebar() {
+            if(window.innerWidth < 768) { // md breakpoint Tailwind
+                sidebar.classList.add('-translate-x-full');
+                sidebarOverlay.classList.add('hidden');
+            }
+        }
+
+        openSidebarBtn.addEventListener('click', openMobileSidebar);
+        closeSidebarBtn.addEventListener('click', closeMobileSidebar);
+        sidebarOverlay.addEventListener('click', closeMobileSidebar);
+
+        // Resize listener untuk memastikan sidebar tidak error saat resize layar
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 768) {
+                sidebar.classList.remove('-translate-x-full');
+                sidebarOverlay.classList.add('hidden');
+            } else {
+                // Jangan paksa tutup jika user sengaja buka, tapi behavior default disembunyikan
+                if(!sidebarOverlay.classList.contains('hidden')) {
+                    sidebar.classList.remove('-translate-x-full');
+                } else {
+                    sidebar.classList.add('-translate-x-full');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
